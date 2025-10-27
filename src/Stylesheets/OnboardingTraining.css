@@ -1,0 +1,21 @@
+/* Basic styling for onboarding dashboard + form view. Keep styles separate from MUI overrides. */
+
+.onboarding-root { padding: 20px; font-family: "Roboto", sans-serif; color: #222; }
+.onboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.onboard-card { padding: 12px; border-radius: 10px; background: #fff; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+.onboard-list { background: #fff; border-radius: 10px; padding: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+.candidate-item { display: flex; align-items: center; gap: 12px; padding: 8px 6px; border-bottom: 1px solid #f0f0f0; }
+.candidate-item:last-child { border-bottom: none; }
+.candidate-meta { display: flex; flex-direction: column; }
+.progress-small { width: 160px; height: 8px; border-radius: 6px; background: #f0f0f0; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg,#34d399,#60a5fa); transition: width .3s ease; }
+.assign-dialog input, .assign-dialog select { margin-bottom: 8px; }
+.status-pill { padding: 6px 10px; border-radius: 999px; font-weight: 600; font-size: 12px; color: #fff; }
+.status-selected { background: #f59e0b; }
+.status-onboarding { background: #2563eb; }
+.status-training { background: #7c3aed; }
+.status-onboarded { background: #10b981; }
+.small-muted { color: #777; font-size: 13px; }
+@media (max-width: 900px) {
+  .onboard-cards { grid-template-columns: repeat(2, 1fr); }
+}

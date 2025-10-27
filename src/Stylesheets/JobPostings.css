@@ -1,0 +1,190 @@
+.job-postings-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  color: #333;
+}
+
+.job-postings-page h2 {
+  margin-bottom: 10px;
+}
+
+.job-postings-page button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.job-postings-page button:hover {
+  background-color: #0056b3;
+}
+
+/* ---- Summary Boxes ---- */
+.job-postings-page .stats-section {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.job-postings-page .stat-card {
+  flex: 1;
+  padding: 20px;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.job-postings-page .stat-card:hover {
+  transform: scale(1.03);
+}
+
+.job-postings-page .stat-card.active {
+  border: 2px solid #007bff;
+}
+
+.job-postings-page .stat-card h2 {
+  margin: 0;
+  font-size: 28px;
+  color: #222;
+}
+
+.job-postings-page .stat-card p {
+  margin: 5px 0 0;
+  color: #666;
+}
+
+/* Colors */
+.job-postings-page .stat-card.blue {
+  border-top: 5px solid #007bff;
+}
+.job-postings-page .stat-card.purple {
+  border-top: 5px solid #6f42c1;
+}
+.job-postings-page .stat-card.gold {
+  border-top: 5px solid #ffc107;
+}
+
+/* ---- Table ---- */
+.job-postings-page .table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.job-postings-page .table th,
+.table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.job-postings-page .table th {
+  background-color: #f1f1f1;
+  font-weight: bold;
+  color: #333;
+}
+
+.job-postings-page .table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* ---- Modal ---- */
+.job-postings-page .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.job-postings-page .modal-content {
+  background: #fff;
+  width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 8px;
+  padding: 20px;
+  position: relative;
+}
+
+.job-postings-page .modal-content h3 {
+  margin-bottom: 15px;
+}
+
+.job-postings-page .modal-content button {
+  margin-top: 10px;
+}
+
+/* ---- Form Section ---- */
+.job-postings-page .form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.job-postings-page .form-section label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.job-postings-page .form-section input,
+.form-section select,
+.form-section textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.job-postings-page .form-section textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.job-postings-page .form-section div {
+  display: flex;
+  flex-direction: column;
+}
+
+.job-postings-page .form-section input[disabled],
+.form-section select[disabled],
+.form-section textarea[disabled] {
+  background: #f3f3f3;
+  color: #777;
+}
+
+/* ---- Modal Buttons ---- */
+.job-postings-page .modal-content div[style*="text-align: right"] button {
+  margin-left: 8px;
+  padding: 8px 14px;
+}
+
+/* ---- Add Department Modal ---- */
+.job-postings-page .modal-content input {
+  margin-bottom: 10px;
+}
+
+/* Scroll styling */
+.job-postings-page .modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+.job-postings-page .modal-content::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}

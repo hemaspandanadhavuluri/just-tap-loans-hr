@@ -1,0 +1,57 @@
+.app-header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+   background-color: #0f4a97;
+    padding : 20px;
+    color: white;
+}
+.logo{
+     width: 25%;
+    align-items: center;
+    font-size: 20px;
+}
+
+.right-header{
+     display: flex;
+     flex-direction: row;
+     justify-content: flex-end;
+     gap: 20px;
+     align-items: center;
+        width: 70%;
+        margin-left: auto;
+        margin-right: 20px;
+        cursor: pointer;
+}
+
+.icons {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* space between icons */
+    margin-left: 10px;
+}
+
+.icon {
+    font-size: 24px;
+    cursor: pointer;
+    color: #fff; /* change color as needed */
+}
+
+.icon:hover {
+    color: #000000; /* hover effect */
+}
+
+.profile-icon{
+    font-size: 35px;
+    cursor: pointer;
+    margin-right: -20px;
+    color: #fff; /* change color as needed */
+}
+.User-info {
+    display: flex;
+    flex-Direction: column;
+    align-Items: flex-end;
+    font-weight:700;
+    font-size: 17px;
+}
+

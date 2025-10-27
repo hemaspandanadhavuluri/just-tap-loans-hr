@@ -1,0 +1,441 @@
+/* === GENERAL === */
+.employee-management {
+    padding: 30px;
+    font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+    background: #f5f7fa;
+    min-height: 100vh;
+}
+
+.employee-management h1 {
+    color: #1e2a38;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+/* === TABS === */
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.tab {
+    padding: 10px 25px;
+    background: #e0e6ed;
+    border: none;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab.active {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
+}
+
+.tab:hover {
+    background: #d5dce4;
+}
+
+/* === SEARCH BAR === */
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.search-input {
+    width: 50%;
+    padding: 12px 16px;
+    font-size: 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 30px;
+    outline: none;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.search-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* === TABLE === */
+.table-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.employee-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.employee-table th,
+.employee-table td {
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+}
+
+.employee-table th {
+    background: #f0f4f8;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+.employee-table tr:nth-child(even) {
+    background: #f9fafb;
+}
+
+.employee-table tr:hover {
+    background: #eef3fb;
+    transition: background 0.3s ease;
+}
+
+.view-btn {
+    padding: 8px 16px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.view-btn:hover {
+    background: #1e40af;
+}
+
+/* === MODAL === */
+/* Modal overlay */
+.modal-overlay {
+    top: 20px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 23, 42, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    overflow: auto; /* entire modal scrolls if too tall */
+    padding: 10px; /* space from viewport edges */
+    box-sizing: border-box;
+}
+
+/* Modal box */
+.modal {
+    background: #fff;
+    padding : 50px;
+    width: 80%;
+    height: 80%;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: visible; /* no inner scroll */
+}
+
+/* Modal header */
+.modal h2 {
+    margin: 0;
+    padding: 20px;
+    background-color: #2563eb;
+    color: #fff;
+    font-size: 22px;
+}
+
+/* Modal content */
+.employee-details {
+    padding: 20px;
+    overflow: visible; /* no inner scroll */
+}
+.personal-info {
+   margin-top: 1500px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    margin-bottom : 20px
+}
+
+/* Example for sections */
+.employee-details .section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+
+.employee-details .section h3 {
+    color: #1e293b;
+    margin-bottom: 15px;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.employee-details .field {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+.employee-details .field label {
+    width: 180px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.employee-details .field .value {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.employee-details .field input.value,
+.employee-details .field textarea.value {
+    border-color: #2563eb;
+    background: #f9fafb;
+}
+
+.employee-details .field button {
+    margin-left: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+    border: none;
+    border-radius: 6px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.employee-details .field button:hover {
+    background: #1e40af;
+}
+
+/* === MODAL ACTIONS === */
+.modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 25px;
+    justify-content: flex-end;
+}
+
+.modal-actions button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-actions button:hover {
+    background: #1d4ed8;
+}
+
+/* === FIRE / RESIGNATION === */
+.fire-section,
+.resignation-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+}
+
+.fire-section h3 {
+    color: #dc2626;
+}
+
+.resignation-section {
+    background: #fffaf0;
+    border-color: #fde68a;
+}
+
+.resignation-section h3 {
+    color: #d97706;
+}
+
+.fire-section textarea,
+.resignation-section textarea {
+    width: 100%;
+    min-height: 70px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    resize: vertical;
+}
+
+.fire-btn {
+    background: #dc2626 !important;
+}
+
+.fire-btn:hover {
+    background: #b91c1c !important;
+}
+
+.approve-btn {
+    background: #f59e0b !important;
+}
+
+.approve-btn:hover {
+    background: #d97706 !important;
+}
+
+.close-btn {
+    background: #64748b;
+}
+
+.close-btn:hover {
+    background: #475569;
+}
+
+/* === SUB-MODALS === */
+.sub-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1100;
+    animation: fadeIn 0.3s ease;
+}
+
+.sub-modal h3 {
+    margin-top: 0;
+    color: #1e293b;
+}
+
+.sub-modal .form-group {
+    margin: 15px 0;
+}
+
+.sub-modal label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.sub-modal input,
+.sub-modal textarea,
+.sub-modal select {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.sub-modal textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.sub-modal .buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+    gap: 10px;
+}
+
+.sub-modal .send-btn {
+    background: #16a34a;
+}
+
+.sub-modal .send-btn:hover {
+    background: #15803d;
+}
+
+/* === REVIEW SECTIONS === */
+.review-section {
+    margin-top: 25px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f1f5f9;
+}
+
+.review-section h3 {
+    margin-top: 0;
+    color: #1e293b;
+}
+
+.review-section .changes {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    margin: 10px 0;
+}
+
+.review-section .buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.review-section .accept-btn {
+    background: #16a34a;
+}
+
+.review-section .accept-btn:hover {
+    background: #15803d;
+}
+
+.review-section .reject-btn {
+    background: #dc2626;
+}
+
+.review-section .reject-btn:hover {
+    background: #b91c1c;
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .search-input { width: 90%; }
+    .modal { width: 95vw; height: 90vh; padding: 20px; }
+    .employee-details .field { flex-direction: column; align-items: flex-start; }
+    .employee-details .field label { width: 100%; margin-bottom: 5px; }
+}

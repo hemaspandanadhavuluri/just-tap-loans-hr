@@ -1,0 +1,271 @@
+.recruitment-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  background: #f6f6f8;
+}
+
+.offer-letter {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  font-size: 14px;
+  color: #111827;
+}
+
+.offer-letter h4 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.offer-letter ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.offer-letter p {
+  margin: 8px 0;
+}
+
+.offer-letter strong {
+  color: #111827;
+}
+.offer-letter-modal {
+  max-width: 800px;
+  width: 90%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: 'Arial', sans-serif;
+  color: #111827;
+}
+
+.editable-offer-letter {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 12px 0;
+  background: #f9fafb;
+  min-height: 500px;
+  overflow-y: auto;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.editable-offer-letter p {
+  margin: 8px 0;
+}
+
+.editable-offer-letter h4 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.editable-offer-letter ul {
+  padding-left: 20px;
+}
+
+.editable-offer-letter strong {
+  color: #111827;
+}
+
+.editable-offer-letter:focus {
+  outline: 2px solid #2563eb;
+  background: #ffffff;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+
+/* Header */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  margin: 0;
+}
+
+/* Buttons */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.btn:hover {
+  background: #1d4ed8;
+}
+
+.btn-secondary {
+  background: #6b7280;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+}
+
+.btn-small {
+  padding: 4px 8px;
+  font-size: 12px;
+  margin: 2px;
+}
+
+/* Status Cards */
+.status-cards {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.status-cards .card {
+  flex: 1;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.status-cards .card:hover {
+  transform: translateY(-3px);
+}
+
+.status-cards .card h3 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.status-cards .card p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #f3f4f6;
+}
+
+/* Card Colors */
+.status-cards .card:nth-child(1) { background: #f59e0b; }
+.status-cards .card:nth-child(2) { background: #10b981; }
+.status-cards .card:nth-child(3) { background: #ef4444; }
+.status-cards .card:nth-child(4) { background: #6b7280; }
+
+/* Tables */
+.table-section {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-top: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.table th {
+  background: #f3f4f6;
+}
+
+.table td small {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left:0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.modal h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.form-row {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.form-row input,
+.form-row textarea,
+.form-row select {
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  gap: 8px;
+}
+
+.modal-actions button {
+  min-width: 100px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .status-cards {
+    flex-direction: column;
+  }
+
+  .modal-content {
+    max-width: 95%;
+  }
+}
