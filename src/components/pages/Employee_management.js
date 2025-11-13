@@ -23,16 +23,10 @@ function Employee_Management() {
     const [manageCredentialsData, setManageCredentialsData] = useState({ username: '', password: '', role: '' });
     const [letterTemplate, setLetterTemplate] = useState('');
 
-    // Hardcoded data for pending edits and resignation
-    const [pendingEdits] = useState({
-        fullName: 'John Doe Updated',
-        email: 'john.updated@example.com',
-        phoneNumber: '+1234567891'
-    });
-    const [pendingResignation] = useState({
-        reason: 'Personal reasons',
-        letter: 'Sample resignation letter content...'
-    });
+    // State for pending edits and resignation
+    const [pendingEdits, setPendingEdits] = useState([]);
+    const [pendingResignation, setPendingResignation] = useState(null);
+    const [trainerName, setTrainerName] = useState('');
 
     useEffect(() => {
         fetchEmployees();
@@ -79,8 +73,51 @@ function Employee_Management() {
         return years;
     };
 
-    const handleViewEmployee = (employee) => {
+    const handleViewEmployee = async (employee) => {
         setSelectedEmployee(employee);
+        // Fetch pending edits for this employee
+        try {
+            const response = await fetch(`http://localhost:5000/api/users/profile-edit-requests/${employee._id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setPendingEdits(data);
+            } else {
+                setPendingEdits([]);
+            }
+        } catch (error) {
+            console.error('Error fetching pending edits:', error);
+            setPendingEdits([]);
+        }
+        // Fetch resignation request for this employee
+        try {
+            const response = await fetch(`http://localhost:5000/api/users/resignation-request/${employee._id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setPendingResignation(data);
+            } else {
+                setPendingResignation(null);
+            }
+        } catch (error) {
+            console.error('Error fetching resignation request:', error);
+            setPendingResignation(null);
+        }
+        // Fetch trainer name if trainer exists
+        if (employee.trainer) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/users/${employee.trainer}`);
+                if (response.ok) {
+                    const trainerData = await response.json();
+                    setTrainerName(trainerData.fullName);
+                } else {
+                    setTrainerName('N/A');
+                }
+            } catch (error) {
+                console.error('Error fetching trainer:', error);
+                setTrainerName('N/A');
+            }
+        } else {
+            setTrainerName('N/A');
+        }
         setShowModal(true);
     };
 
@@ -198,36 +235,124 @@ function Employee_Management() {
         handleCloseSubModal();
     };
 
-    const handleManageCredentials = () => {
+    const handleManageCredentials = async () => {
         if (!manageCredentialsData.username.trim() || !manageCredentialsData.password.trim()) {
             alert('Please enter username and password.');
             return;
         }
-        addActivity(`Credentials updated for ${selectedEmployee.fullName}`, 'employee');
-        alert('Credentials managed successfully!');
-        handleCloseSubModal();
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/users/create-employee-credentials`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    employeeId: selectedEmployee.employeeId,
+                    username: manageCredentialsData.username,
+                    password: manageCredentialsData.password,
+                }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                addActivity(`Credentials created for ${selectedEmployee.fullName}`, 'employee');
+                alert('Credentials created successfully! Email sent to employee.');
+                handleCloseSubModal();
+            } else {
+                const errorData = await response.json();
+                alert(`Failed to create credentials: ${errorData.message}`);
+            }
+        } catch (error) {
+            console.error('Error creating credentials:', error);
+            alert('Error creating credentials.');
+        }
     };
 
-    const handleAcceptEdits = () => {
-        // Accept pending edits
-        setSelectedEmployee(prev => ({ ...prev, ...pendingEdits }));
-        addActivity(`Personal details accepted for ${selectedEmployee.fullName}`, 'employee');
-        alert('Edits accepted successfully!');
+    const handleAcceptEdits = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/users/profile-edit-requests/${selectedEmployee._id}/approve`, {
+                method: 'PUT',
+            });
+            if (response.ok) {
+                // Update selectedEmployee with the edits
+                const updatedEmployee = { ...selectedEmployee };
+                pendingEdits.forEach(edit => {
+                    updatedEmployee[edit.field] = edit.requestedValue;
+                });
+                setSelectedEmployee(updatedEmployee);
+                setPendingEdits([]);
+                addActivity(`Personal details accepted for ${selectedEmployee.fullName}`, 'employee');
+                alert('Edits accepted successfully!');
+            } else {
+                alert('Failed to accept edits.');
+            }
+        } catch (error) {
+            console.error('Error accepting edits:', error);
+            alert('Error accepting edits.');
+        }
     };
 
-    const handleRejectEdits = () => {
-        addActivity(`Personal details rejected for ${selectedEmployee.fullName}`, 'employee');
-        alert('Edits rejected.');
+    const handleRejectEdits = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/users/profile-edit-requests/${selectedEmployee._id}/reject`, {
+                method: 'PUT',
+            });
+            if (response.ok) {
+                setPendingEdits([]);
+                addActivity(`Personal details rejected for ${selectedEmployee.fullName}`, 'employee');
+                alert('Edits rejected.');
+            } else {
+                alert('Failed to reject edits.');
+            }
+        } catch (error) {
+            console.error('Error rejecting edits:', error);
+            alert('Error rejecting edits.');
+        }
     };
 
-    const handleAcceptResignation = () => {
-        addActivity(`Resignation accepted for ${selectedEmployee.fullName}`, 'employee');
-        alert('Resignation accepted successfully!');
+    const handleAcceptResignation = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/users/resignation-request/${pendingResignation._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: 'approved' }),
+            });
+            if (response.ok) {
+                addActivity(`Resignation accepted for ${selectedEmployee.fullName}`, 'employee');
+                setPendingResignation(null);
+                alert('Resignation accepted successfully!');
+            } else {
+                alert('Failed to accept resignation.');
+            }
+        } catch (error) {
+            console.error('Error accepting resignation:', error);
+            alert('Error accepting resignation.');
+        }
     };
 
-    const handleRejectResignation = () => {
-        addActivity(`Resignation rejected for ${selectedEmployee.fullName}`, 'employee');
-        alert('Resignation rejected.');
+    const handleRejectResignation = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/users/resignation-request/${pendingResignation._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: 'rejected' }),
+            });
+            if (response.ok) {
+                addActivity(`Resignation rejected for ${selectedEmployee.fullName}`, 'employee');
+                setPendingResignation(null);
+                alert('Resignation rejected.');
+            } else {
+                alert('Failed to reject resignation.');
+            }
+        } catch (error) {
+            console.error('Error rejecting resignation:', error);
+            alert('Error rejecting resignation.');
+        }
     };
 
     const handleAction = (action) => {
@@ -427,7 +552,7 @@ function Employee_Management() {
 
                                 <div className="field">
                                     <label>Profile Picture:</label>
-                                    <span className="value">{selectedEmployee.profilePictureUrl ? <img src={selectedEmployee.profilePictureUrl} alt="Profile" style={{width: '50px', height: '50px'}} /> : 'N/A'}</span>
+                                    <span className="value">{selectedEmployee.profilePictureUrl ? <img src={`http://localhost:5000/uploads/${selectedEmployee.profilePictureUrl.replace('uploads/', '')}`} alt="Profile" style={{width: '50px', height: '50px'}} /> : 'N/A'}</span>
                                 </div>
                             </div>
 
@@ -541,6 +666,37 @@ function Employee_Management() {
                                 </div>
                             </div>
 
+                            {/* Training Information Section */}
+                            <div className="section">
+                                <h3>Training Information</h3>
+                                <div className="field">
+                                    <label>Onboarding Status:</label>
+                                    <span className="value">{selectedEmployee.onboardingStatus || 'N/A'}</span>
+                                </div>
+
+                                <div className="field">
+                                    <label>Training Progress:</label>
+                                    <span className="value">{selectedEmployee.progress || 0}%</span>
+                                </div>
+
+                                <div className="field">
+                                    <label>Trainer:</label>
+                                    <span className="value">{trainerName || 'N/A'}</span>
+                                </div>
+
+                                <div className="field">
+                                    <label>Training Timeslot:</label>
+                                    <span className="value">{selectedEmployee.timeslot || 'N/A'}</span>
+                                </div>
+
+                                {selectedEmployee.onboardingStatus === 'completed' && (
+                                    <div className="field">
+                                        <label>Training Score:</label>
+                                        <span className="value">{selectedEmployee.trainingScore || 0}/100</span>
+                                    </div>
+                                )}
+                            </div>
+
                             {/* Reporting Hierarchy Section */}
                             <div className="section">
                                 <h3>Reporting Hierarchy</h3>
@@ -575,12 +731,12 @@ function Employee_Management() {
                                 <h3>Documents</h3>
                                 <div className="field">
                                     <label>Aadhar File:</label>
-                                    <span className="value">{selectedEmployee.aadharFilePath ? <a href={selectedEmployee.aadharFilePath} target="_blank" rel="noopener noreferrer">View Aadhar</a> : 'N/A'}</span>
+                                    <span className="value">{selectedEmployee.aadharFilePath ? <a href={`http://localhost:5000/uploads/${selectedEmployee.aadharFilePath.replace('uploads/', '')}`} target="_blank" rel="noopener noreferrer">View Aadhar</a> : 'N/A'}</span>
                                 </div>
 
                                 <div className="field">
                                     <label>PAN File:</label>
-                                    <span className="value">{selectedEmployee.panFilePath ? <a href={selectedEmployee.panFilePath} target="_blank" rel="noopener noreferrer">View PAN</a> : 'N/A'}</span>
+                                    <span className="value">{selectedEmployee.panFilePath ? <a href={`http://localhost:5000/uploads/${selectedEmployee.panFilePath.replace('uploads/', '')}`} target="_blank" rel="noopener noreferrer">View PAN</a> : 'N/A'}</span>
                                 </div>
                             </div>
 
@@ -598,35 +754,40 @@ function Employee_Management() {
                                     </div>
                                     <div className="field">
                                         <label>Resignation Letter:</label>
-                                        <span className="value">{selectedEmployee.resignationLetter ? <a href={selectedEmployee.resignationLetter} target="_blank" rel="noopener noreferrer">View Letter</a> : 'N/A'}</span>
+                                        <span className="value">{selectedEmployee.resignationLetter ? <a href={`http://localhost:5000/${selectedEmployee.resignationLetter}`} target="_blank" rel="noopener noreferrer">View Letter</a> : 'N/A'}</span>
                                     </div>
                                 </div>
                             )}
 
                             {/* Pending Edits Review */}
-                            {activeTab === 'active' && (
+                            {activeTab === 'active' && pendingEdits.length > 0 && (
                                 <div className="review-section">
                                     <h3>Pending Personal Detail Edits</h3>
                                     <div className="changes">
-                                        <p><strong>New Name:</strong> {pendingEdits.fullName}</p>
-                                        <p><strong>New Email:</strong> {pendingEdits.email}</p>
-                                        <p><strong>New Phone:</strong> {pendingEdits.phoneNumber}</p>
+                                        {pendingEdits.map((edit, index) => (
+                                            <div key={index}>
+                                                <p><strong>Field:</strong> {edit.field}</p>
+                                                <p><strong>Current Value:</strong> {edit.currentValue}</p>
+                                                <p><strong>Requested Value:</strong> {edit.requestedValue}</p>
+                                                <hr />
+                                            </div>
+                                        ))}
                                     </div>
                                     <div className="buttons">
-                                        <button onClick={handleAcceptEdits} className="accept-btn">Accept</button>
-                                        <button onClick={handleRejectEdits} className="reject-btn">Reject</button>
+                                        <button onClick={handleAcceptEdits} className="accept-btn">Accept All</button>
+                                        <button onClick={handleRejectEdits} className="reject-btn">Reject All</button>
                                     </div>
                                 </div>
                             )}
 
                             {/* Pending Resignation Review */}
-                            {activeTab === 'active' && (
+                            {activeTab === 'active' && pendingResignation && (
                                 <div className="review-section">
                                     <h3>Pending Resignation</h3>
                                     <div className="changes">
-                                        <p><strong>Reason:</strong> {pendingResignation.reason}</p>
+                                        <p><strong>Reason:</strong> {pendingResignation?.reason || 'N/A'}</p>
                                         <p><strong>Resignation Letter:</strong></p>
-                                        <textarea readOnly value={pendingResignation.letter} />
+                                        <textarea readOnly value={pendingResignation?.resignationLetterPath || 'No letter uploaded'} />
                                     </div>
                                     <div className="buttons">
                                         <button onClick={handleAcceptResignation} className="accept-btn">Accept</button>
@@ -642,7 +803,6 @@ function Employee_Management() {
                                     <button onClick={() => handleAction('generateLetter')}>Generate Experience Letter</button>
                                     <button onClick={() => handleAction('assignProject')}>Assign Project</button>
                                     <button onClick={() => handleAction('manageCredentials')}>Manage Credentials</button>
-                                    <button onClick={() => handleAction('acceptEdits')}>Accept Personal Detail Edits</button>
 
                                     {/* Fire Employee Section */}
                                     <div className="fire-section">
@@ -655,21 +815,7 @@ function Employee_Management() {
                                         <button onClick={handleFireEmployee} className="fire-btn">Fire Employee</button>
                                     </div>
 
-                                    {/* Approve Resignation Section */}
-                                    <div className="resignation-section">
-                                        <h3>Approve Resignation</h3>
-                                        <textarea
-                                            placeholder="Enter resignation reason..."
-                                            value={resignationReason}
-                                            onChange={(e) => setResignationReason(e.target.value)}
-                                        />
-                                        <input
-                                            type="file"
-                                            accept=".pdf,.doc,.docx"
-                                            onChange={(e) => setResignationLetter(e.target.files[0])}
-                                        />
-                                        <button onClick={handleApproveResignation} className="approve-btn">Approve Resignation</button>
-                                    </div>
+
                                 </>
                             )}
                         </div>

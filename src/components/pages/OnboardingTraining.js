@@ -113,8 +113,9 @@ const initialFormData = {
     panNumber: '', aadharNumber: '', currentAddress: '', permanentAddress: '',
     fatherName: '', fatherDob: '', fatherMobile: '', motherName: '', motherDob: '', motherMobile: '',
     aadharUpload: null, panUpload: null,
-    zone: '', region: '', reporting_hr: '', reporting_fo: '', reporting_zonalHead: '', reporting_regionalHead: '', reporting_ceo: 'Jane D. Rockefeller',
-    joiningDate: '', joiningTime: '', joiningLocation: ''
+    zone: '', region: '', reporting_hr: '', reporting_fo: '', reporting_zonalHead: '', reporting_regionalHead: '', reporting_ceo: 'Bhaskar Davuluri',
+    joiningDate: '', joiningTime: '', joiningLocation: '',
+    salary: ''
 };
 
 const totalSteps = 5;
@@ -155,12 +156,14 @@ const PersonalInfo = ({ formData, handleChange, acceptedOffers, selectedCandidat
                 handleChange({ target: { name: 'email', value: selectedOffer.email || '' } });
                 handleChange({ target: { name: 'dateOfBirth', value: selectedOffer.application?.dateOfBirth ? new Date(selectedOffer.application.dateOfBirth).toISOString().split('T')[0] : '' } });
                 handleChange({ target: { name: 'personalNumber', value: selectedOffer.application?.phone || '' } });
+                handleChange({ target: { name: 'salary', value: selectedOffer.salary || '' } });
             }
         } else {
             // Manual entry, clear pre-filled fields
             handleChange({ target: { name: 'email', value: '' } });
             handleChange({ target: { name: 'dateOfBirth', value: '' } });
             handleChange({ target: { name: 'personalNumber', value: '' } });
+            handleChange({ target: { name: 'salary', value: '' } });
         }
     };
 

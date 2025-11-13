@@ -1,0 +1,68 @@
+.hr-leave-page {
+	padding: 16px;
+	font-family: Arial, sans-serif;
+}
+.cards-row {
+	display: flex;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+.card {
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
+	padding: 12px;
+	min-width: 160px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.card-title { color: #666; font-size: 14px; }
+.card-number { font-size: 22px; font-weight: 600; margin-top: 6px; }
+.card.approved { border-left: 4px solid #2e7d32; }
+.card.pending { border-left: 4px solid #f9a825; }
+.card.rejected { border-left: 4px solid #c62828; }
+.card.holidays { border-left: 4px solid #1565c0; }
+
+/* Styles for HR Leave & Holiday Management */
+.hr-leave-page { padding: 16px; font-family: Arial, sans-serif; }
+.cards-row { display: flex; gap: 12px; margin-bottom: 18px; }
+.card { background: #fff; border: 1px solid #e6e6e6; padding: 12px; border-radius: 6px; min-width: 160px; }
+.card .card-title { font-size: 14px; color: #444; }
+.card .card-number { font-size: 22px; font-weight: 700; margin-top: 6px; }
+.card.approved { border-left: 4px solid #2e7d32; }
+.card.pending { border-left: 4px solid #f57c00; }
+.card.rejected { border-left: 4px solid #c62828; }
+.card.holidays { border-left: 4px solid #1976d2; }
+
+.table-wrapper { overflow-x: auto; }
+.requests-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+.requests-table th, .requests-table td { padding: 8px 10px; border-bottom: 1px solid #eee; text-align: left; }
+.btn-approve { background: #2e7d32; color: #fff; border: none; padding: 6px 8px; margin-right: 6px; border-radius: 4px; cursor: pointer; }
+.btn-reject { background: #c62828; color: #fff; border: none; padding: 6px 8px; border-radius: 4px; cursor: pointer; }
+.btn-view { background: #1565c0; color: #fff; border: none; padding: 6px 8px; border-radius: 4px; cursor: pointer; }
+
+.holiday-list { list-style: none; padding-left: 0; }
+.holiday-list li { padding: 6px 0; }
+
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; }
+.modal { background: #fff; padding: 16px; border-radius: 6px; max-width: 600px; width: 90%; }
+.reason-box { background: #fafafa; border: 1px solid #eee; padding: 10px; border-radius: 4px; }
+
+
+.table-wrapper { overflow-x: auto; }
+.requests-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.requests-table th, .requests-table td { padding: 8px 10px; border-bottom: 1px solid #eee; text-align: left; }
+.requests-table tr.status-approved { background: #f1f8f3; }
+.requests-table tr.status-rejected { background: #fff5f5; }
+.requests-table tr.status-pending { background: #fffaf6; }
+.btn-approve { background: #2e7d32; color: #fff; border: none; padding: 6px 8px; margin-right: 6px; cursor: pointer; border-radius: 4px; }
+.btn-reject { background: #c62828; color: #fff; border: none; padding: 6px 8px; cursor: pointer; border-radius: 4px; }
+.btn-view { background: #1565c0; color: #fff; border: none; padding: 6px 8px; cursor: pointer; border-radius: 4px; }
+
+.holiday-list { margin-top: 8px; padding-left: 16px; }
+
+.modal-overlay { position: fixed; left: 0; right: 0; top: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal { background: #fff; padding: 16px; border-radius: 6px; max-width: 600px; width: 100%; }
+.reason-box { background: #fafafa; padding: 10px; border-radius: 4px; border: 1px solid #eee; }
+.modal-actions { margin-top: 12px; text-align: right; }
+
+.error { color: #b00020; margin-bottom: 8px; }

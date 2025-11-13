@@ -24,7 +24,7 @@ const RoleForm = ({ formData, handleChange }) => {
 
   // Role options for the dropdown
   const roles = [
-    { value: 'FO', label: 'FO (Field Officer)' },
+    { value: 'FO', label: 'FO (Financial Officer)' },
     { value: 'RegionalHead', label: 'Regional Head' },
     { value: 'ZonalHead', label: 'Zonal Head' },
     { value: 'CEO', label: 'CEO (Top Level)' },
@@ -75,7 +75,7 @@ const RoleForm = ({ formData, handleChange }) => {
 
     switch (employeeType) {
       case 'FO':
-        // FO (Field Officer) requires Regional Head and Zonal Head
+        // FO (Financial Officer) requires Regional Head and Zonal Head
         summaryText += `<span style="font-weight: 700; color: ${theme.palette.primary.main};">FO</span>. Requires selection of Regional Head and Zonal Head. (CEO → ZH → RH → FO)`;
         break;
       case 'RegionalHead':
@@ -164,7 +164,7 @@ const RoleForm = ({ formData, handleChange }) => {
             <MenuItem key={rh.id} value={rh.id}>{rh.name}</MenuItem>
           ))}
         </Select>
-        <FormHelperText>Required supervisor for Field Officers (FO).</FormHelperText>
+        <FormHelperText>Required supervisor for Financial Officers (FO).</FormHelperText>
       </FormControl>
     );
 

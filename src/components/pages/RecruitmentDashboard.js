@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 function RecruitmentDashboard() {
   const { jobPostings, applications, interviews, offers, candidates } = useRecruitment();
   const [recentActivities, setRecentActivities] = useState([]);
-  const [topCandidates, setTopCandidates] = useState([]);
 
   useEffect(() => {
     // Set recent activities from the latest 3 applications
@@ -19,15 +18,7 @@ function RecruitmentDashboard() {
     }));
     setRecentActivities(latestApplications);
 
-    // Set top rated candidates from candidates sorted by score descending
-    const sortedCandidates = [...candidates].sort((a, b) => b.score - a.score).slice(0, 3).map(candidate => ({
-      id: candidate._id,
-      name: candidate.name,
-      position: candidate.position,
-      status: candidate.stage,
-      rating: candidate.score
-    }));
-    setTopCandidates(sortedCandidates);
+  
   }, [applications, candidates]);
   return (
     <div className="recruitment-page">
@@ -79,34 +70,9 @@ function RecruitmentDashboard() {
         )}
       </ul>
     </div>
-
-    {/* Top Rated Candidates */}
-    <div className="section-content">
-      <h2>Top Rated Candidates</h2>
-      <ul className="top-rated-list">
-        {topCandidates.length > 0 ? (
-          topCandidates.map(candidate => (
-            <li key={candidate.id} className="top-rated-row">
-              <div className="left">
-                <h3>{candidate.name}</h3>
-                <p>{candidate.position}</p>
-              </div>
-              <div className="middle">
-                <p>Status: {candidate.status}</p>
-              </div>
-              <div className="right">
-                <h3>⭐ {candidate.rating}</h3>
-              </div>
-            </li>
-          ))
-        ) : (
-          <p>No top-rated candidates available.</p>
-        )}
-      </ul>
-    </div>
   </div>
-);
-};
+  );
+}
  
 
 export default RecruitmentDashboard;

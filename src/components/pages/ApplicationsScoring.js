@@ -4,7 +4,7 @@ import { useActivity } from "./ActivityContext";
 import "../../Stylesheets/ApplicationsScoring.css";
 
 function ApplicationsScoring() {
-  const { applications, updateApplication } = useRecruitment();
+  const { applications, updateApplication, interviews } = useRecruitment();
   const { addActivity } = useActivity();
   const [activeTab, setActiveTab] = useState("recent");
   const [selectedApplication, setSelectedApplication] = useState(null);
@@ -161,7 +161,7 @@ function ApplicationsScoring() {
             <th>Experience</th>
             <th>Application Date</th>
             {activeTab !== "recent" && <th>Status</th>}
-            {activeTab !== "recent" && <th>Score</th>}
+              {activeTab !== "recent" && <th>Avg Score</th>}
             <th>Actions</th>
           </tr>
         </thead>
@@ -173,7 +173,18 @@ function ApplicationsScoring() {
               <td>{app.experience}</td>
               <td>{new Date(app.appliedDate).toLocaleDateString()}</td>
               {activeTab !== "recent" && <td>{app.status}</td>}
-              {activeTab !== "recent" && <td>{app.score}</td>}
+              {activeTab !== "recent" && <td>{(() => {
+                // Calculate average score from all interview rounds
+                const candidateInterviews = interviews.filter(interview =>
+                  interview.application && interview.application.toString() === app.candidateId.toString()
+                );
+                if (candidateInterviews.length > 0) {
+                  const totalScore = candidateInterviews.reduce((sum, interview) => sum + (interview.rating || 0), 0);
+                  const avgScore = totalScore / candidateInterviews.length;
+                  return avgScore.toFixed(1);
+                }
+                return app.score || 'N/A';
+              })()}</td>}
               <td>
                 <button className="btn" onClick={() => setSelectedApplication(app)}>View</button>
               </td>
@@ -201,7 +212,18 @@ function ApplicationsScoring() {
               <div><strong>Position:</strong> {selectedApplication.jobPosting?.title || 'N/A'}</div>
               <div><strong>Applied Date:</strong> {new Date(selectedApplication.appliedDate).toLocaleDateString()}</div>
               <div><strong>Status:</strong> {selectedApplication.status}</div>
-              <div><strong>Score:</strong> {selectedApplication.score}</div>
+              <div><strong>Score:</strong> {(() => {
+                // Calculate average score from all interview rounds
+                const candidateInterviews = interviews.filter(interview =>
+                  interview.application && interview.application.toString() === selectedApplication.candidateId.toString()
+                );
+                if (candidateInterviews.length > 0) {
+                  const totalScore = candidateInterviews.reduce((sum, interview) => sum + (interview.rating || 0), 0);
+                  const avgScore = totalScore / candidateInterviews.length;
+                  return avgScore.toFixed(1);
+                }
+                return selectedApplication.score || 'N/A';
+              })()}</div>
             </div>
 
             <h4>Skills</h4>

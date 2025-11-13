@@ -56,10 +56,10 @@ export default function InterviewsFeedback() {
   const [applications, setApplications] = useState([]);
 
   useEffect(() => {
-    // Filter candidates with interviews scheduled or shortlisted/completed applications
+    // Filter candidates with interviews scheduled or shortlisted/completed/rejected applications
     const candidatesWithInterviewsOrShortlisted = candidates.filter(candidate =>
       interviews.some(interview => interview.application && interview.application.toString() === candidate._id.toString()) ||
-      candidate.applications.some(app => app.status === 'Shortlisted' || app.status === 'Completed')
+      candidate.applications.some(app => app.status === 'Shortlisted' || app.status === 'Completed' || app.status === 'Rejected')
     );
 
     // Map to applications structure
@@ -81,7 +81,7 @@ export default function InterviewsFeedback() {
           notes: interview.notes || "",
           score: interview.rating,
           feedback: interview.feedback || "",
-          result: interview.status === 'Completed' ? 'Pass' : 'Pending', // Map status to result
+          result: interview.status === 'Completed' ? (interview.rating >= 3 ? 'Pass' : 'Fail') : 'Pending', // Map status to result
           completed: interview.status === 'Completed',
         }));
 
@@ -95,8 +95,9 @@ export default function InterviewsFeedback() {
         appliedDate: new Date(candidate.appliedDate).toISOString().split('T')[0],
         resume: candidate.resume ? `http://localhost:5000/uploads/${candidate.resume.split('/').pop()}` : "",
         coverLetter: shortlistedApp ? shortlistedApp.coverLetter || "" : "",
-        status: candidate.applications.some(app => app.status === 'Completed') ? 'Completed' : 'InProcess', // Map status correctly
-        finalDecision: candidate.applications.some(app => app.status === 'Completed') ? 'Selected' : 'Pending',
+        status: candidate.applications.some(app => app.status === 'Completed') ? 'Completed' : candidate.applications.some(app => app.status === 'Rejected') ? 'Rejected' : 'InProcess', // Map status correctly
+        finalDecision: candidate.applications.some(app => app.status === 'Completed') ? 'Selected' : candidate.applications.some(app => app.status === 'Rejected') ? 'Rejected' : 'Pending',
+        rejectionReason: candidate.applications.find(app => app.status === 'Rejected')?.rejectionReason || null,
         steps: steps,
       };
     });
@@ -109,10 +110,13 @@ export default function InterviewsFeedback() {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
   const [calendarDayModal, setCalendarDayModal] = useState({ open: false, date: null });
 
   const [currentApp, setCurrentApp] = useState(null);
   const [editingStepIndex, setEditingStepIndex] = useState(null);
+  const [currentStep, setCurrentStep] = useState(null);
 
   const [scheduleForm, setScheduleForm] = useState({
     type: COMMON_PIPELINE[0],
@@ -130,8 +134,17 @@ export default function InterviewsFeedback() {
     feedback: "",
   });
 
+  const [rescheduleForm, setRescheduleForm] = useState({
+    date: todayISO(),
+    time: "10:00",
+  });
+
+  const [rejectForm, setRejectForm] = useState({
+    reason: "",
+  });
+
   // ---------- Derived lists ----------
-  const inProcessList = useMemo(() => applications.filter((a) => a.status === "Reviewing" || a.status === "InProcess"), [applications]);
+  const inProcessList = useMemo(() => applications.filter((a) => (a.status === "Reviewing" || a.status === "InProcess") && a.status !== "Rejected"), [applications]);
   const completedList = useMemo(() => applications.filter((a) => a.status === "Completed"), [applications]);
   const rejectedList = useMemo(() => applications.filter((a) => a.status === "Rejected"), [applications]);
 
@@ -241,6 +254,19 @@ export default function InterviewsFeedback() {
     setShowFeedbackModal(true);
   };
 
+  // open reschedule modal for step
+  const openRescheduleForStep = (app, stepIndex) => {
+    setCurrentApp(app);
+    setEditingStepIndex(stepIndex);
+    const s = app.steps[stepIndex];
+    setCurrentStep(s);
+    setRescheduleForm({
+      date: s.date || todayISO(),
+      time: s.time || "10:00",
+    });
+    setShowRescheduleModal(true);
+  };
+
   // submit feedback -> update step and application status
   const submitFeedback = async () => {
     if (!currentApp || editingStepIndex === null) return;
@@ -250,9 +276,9 @@ export default function InterviewsFeedback() {
 
     try {
       const updateData = {
-        rating: clampedScore,
+        rating: clampedScore === 0 ? 1 : clampedScore, // Ensure rating is at least 1
         feedback: feedback,
-        status: result === "Pass" ? "Completed" : "Failed", // Map to backend status
+        status: "Completed", // Always set to Completed, determine pass/fail by rating
       };
 
       await updateInterview(step.id, updateData);
@@ -282,16 +308,59 @@ export default function InterviewsFeedback() {
     }
   };
 
-  const rejectApplication = (appId) => {
-    setApplications((prev) => prev.map((a) => (a.id === appId ? { ...a, status: "Rejected", finalDecision: "Rejected" } : a)));
-    setShowViewModal(false);
-    setCurrentApp(null);
+  const openRejectModal = (app) => {
+    setCurrentApp(app);
+    setShowRejectModal(true);
+  };
+
+  const submitReject = async () => {
+    if (!currentApp) return;
+    try {
+      // Find the shortlisted application index
+      const candidate = candidates.find(c => c._id === currentApp.id);
+      const shortlistedAppIndex = candidate.applications.findIndex(app => app.status === 'Shortlisted');
+      if (shortlistedAppIndex !== -1) {
+        await updateApplication(candidate._id, shortlistedAppIndex, { status: 'Rejected', rejectionReason: rejectForm.reason });
+        addActivity(`Rejected candidate ${currentApp.name} with reason: ${rejectForm.reason}`);
+      }
+      setShowRejectModal(false);
+      setShowViewModal(false);
+      setCurrentApp(null);
+      setRejectForm({ reason: "" });
+    } catch (error) {
+      console.error('Error rejecting application:', error);
+      alert('Failed to reject application');
+    }
   };
 
   const removeStep = (appId, stepId) => {
     setApplications((prev) => prev.map((a) => (a.id === appId ? { ...a, steps: a.steps.filter((s) => s.id !== stepId) } : a)));
     if (currentApp && currentApp.id === appId) {
       setCurrentApp((c) => ({ ...c, steps: c.steps.filter((s) => s.id !== stepId) }));
+    }
+  };
+
+  // submit reschedule -> update step date and time
+  const submitReschedule = async () => {
+    if (!currentApp || editingStepIndex === null) return;
+    const step = currentApp.steps[editingStepIndex];
+
+    try {
+      const updateData = {
+        date: new Date(rescheduleForm.date + 'T' + rescheduleForm.time),
+        time: rescheduleForm.time,
+      };
+
+      await updateInterview(step.id, updateData);
+      addActivity(`Rescheduled ${step.type} for ${currentApp.name} to ${rescheduleForm.date} at ${rescheduleForm.time}`);
+      setShowRescheduleModal(false);
+      setShowViewModal(false);
+      setEditingStepIndex(null);
+      setCurrentApp(null);
+      setRescheduleForm({ date: todayISO(), time: "10:00" });
+    } catch (error) {
+      console.error('Error rescheduling interview:', error);
+      alert('Failed to reschedule interview');
     }
   };
 
@@ -387,7 +456,7 @@ export default function InterviewsFeedback() {
                       <td>{a.name}</td>
                       <td>{a.position}</td>
                       <td>{a.appliedDate}</td>
-                      <td>{last ? `${last.type} — ${last.result}` : "-"}</td>
+                      <td>{a.rejectionReason || (last ? `${last.type} — ${last.result}` : "-")}</td>
                       <td><button className="btn-small" onClick={() => openView(a)}>View</button></td>
                     </tr>
                   );
@@ -470,7 +539,7 @@ export default function InterviewsFeedback() {
               <h3>{currentApp.name} — {currentApp.position}</h3>
               <div className="modal-header-actions">
                 {(currentApp.status === "InProcess" || currentApp.status === "Reviewing") && <button className="btn-small" onClick={() => openScheduleFor(currentApp)}>Schedule Interview</button>}
-                {currentApp.status !== "Rejected" && <button className="btn-small btn-secondary" onClick={() => rejectApplication(currentApp.id)}>Reject</button>}
+                {currentApp.status !== "Rejected" && <button className="btn-small btn-secondary" onClick={() => openRejectModal(currentApp)}>Reject</button>}
                 <button className="btn-small" onClick={() => { setShowViewModal(false); setCurrentApp(null); }}>Close</button>
               </div>
             </header>
@@ -488,6 +557,13 @@ export default function InterviewsFeedback() {
                 <p><strong>Status:</strong> {badgeForStatus(currentApp.status)}</p>
                 <p><strong>Final Decision:</strong> {currentApp.finalDecision}</p>
                 <p><strong>Resume:</strong> {currentApp.resume ? <a href={currentApp.resume} target="_blank" rel="noreferrer">View</a> : "N/A"}</p>
+                {currentApp.status === "Rejected" && (
+                  <p><strong>Rejection Reason:</strong> {(() => {
+                    const candidate = candidates.find(c => c._id === currentApp.id);
+                    const rejectionReason = candidate ? candidate.applications.find(app => app.status === 'Rejected')?.rejectionReason : null;
+                    return rejectionReason || "N/A";
+                  })()}</p>
+                )}
               </div>
             </div>
 
@@ -510,6 +586,7 @@ export default function InterviewsFeedback() {
                         {(currentApp.status === "InProcess" || currentApp.status === "Reviewing") && (
                           <>
                             {!s.completed && <button className="btn-small" onClick={() => openFeedbackForStep(currentApp, idx)}>Mark Completed & Add Feedback</button>}
+                            {!s.completed && <button className="btn-small" onClick={() => openRescheduleForStep(currentApp, idx)}>Reschedule</button>}
                             <button className="btn-small btn-secondary" onClick={() => removeStep(currentApp.id, s.id)}>Remove</button>
                           </>
                         )}
@@ -545,6 +622,41 @@ export default function InterviewsFeedback() {
             <div className="modal-actions">
               <button className="btn" onClick={submitFeedback}>Submit Feedback</button>
               <button className="btn btn-secondary" onClick={() => { setShowFeedbackModal(false); setEditingStepIndex(null); setCurrentApp(null); }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reschedule modal */}
+      {showRescheduleModal && currentApp && editingStepIndex !== null && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h3>Reschedule — {currentApp.steps[editingStepIndex].type} ({currentApp.name})</h3>
+            <div className="form-grid">
+              <label>Date<input type="date" value={rescheduleForm.date} onChange={(e) => setRescheduleForm(prev => ({ ...prev, date: e.target.value }))} /></label>
+              <label>Time<input type="time" value={rescheduleForm.time} onChange={(e) => setRescheduleForm(prev => ({ ...prev, time: e.target.value }))} /></label>
+            </div>
+            <div className="modal-actions">
+              <button className="btn" onClick={submitReschedule}>Reschedule</button>
+              <button className="btn btn-secondary" onClick={() => { setShowRescheduleModal(false); setEditingStepIndex(null); setCurrentApp(null); }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reject modal */}
+      {showRejectModal && currentApp && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h3>Reject Application — {currentApp.name}</h3>
+            <div className="form-grid">
+              <label>Rejection Reason
+                <textarea value={rejectForm.reason} onChange={(e) => setRejectForm(prev => ({ ...prev, reason: e.target.value }))} />
+              </label>
+            </div>
+            <div className="modal-actions">
+              <button className="btn" onClick={submitReject}>Reject</button>
+              <button className="btn btn-secondary" onClick={() => { setShowRejectModal(false); setCurrentApp(null); setRejectForm({ reason: "" }); }}>Cancel</button>
             </div>
           </div>
         </div>

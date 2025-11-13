@@ -14,7 +14,7 @@ function JobOffers() {
   const letterRef = useRef(null);
   const [newOffer, setNewOffer] = useState({
     candidateName: "", email: "", position: "", salary: "", startDate: "", expiryDate: "",
-    employmentType: "Full-time", benefits: "", serviceAgreement: ""
+    employmentType: "Full-time", benefits: "", serviceAgreement: "", hrName: ""
   });
 
   // Get completed candidates for dropdown
@@ -35,7 +35,8 @@ function JobOffers() {
           expiryDate: newOffer.expiryDate,
           employmentType: newOffer.employmentType,
           benefits: newOffer.benefits,
-          serviceAgreement: newOffer.serviceAgreement
+          serviceAgreement: newOffer.serviceAgreement,
+          hrName: newOffer.hrName
         });
         addActivity(`Edited offer for ${newOffer.candidateName}`);
       } else {
@@ -49,11 +50,12 @@ function JobOffers() {
           expiryDate: newOffer.expiryDate,
           employmentType: newOffer.employmentType,
           benefits: newOffer.benefits,
-          serviceAgreement: newOffer.serviceAgreement
+          serviceAgreement: newOffer.serviceAgreement,
+          hrName: newOffer.hrName
         });
         addActivity(`Created new offer for ${newOffer.candidateName}`);
       }
-      setNewOffer({ candidateName: "", email: "", position: "", salary: "", startDate: "", expiryDate: "", employmentType: "Full-time", benefits: "", serviceAgreement: "" });
+      setNewOffer({ candidateName: "", email: "", position: "", salary: "", startDate: "", expiryDate: "", employmentType: "Full-time", benefits: "", serviceAgreement: "", hrName: "" });
       setShowOfferForm(false);
     } catch (error) {
       console.error('Error saving offer:', error);
@@ -198,6 +200,10 @@ function JobOffers() {
                 <option>24 Months</option>
               </select>
             </div>
+            <div className="form-row">
+              <label>HR Name</label>
+              <input type="text" value={newOffer.hrName} onChange={(e) => setNewOffer({...newOffer, hrName: e.target.value})} />
+            </div>
             <div className="modal-actions">
               <button className="btn" onClick={handleAddOffer}>{newOffer.id ? "Save" : "Create Offer"}</button>
               <button className="btn btn-secondary" onClick={() => setShowOfferForm(false)}>Close</button>
@@ -257,7 +263,7 @@ function JobOffers() {
                       <p>We are confident that your skills and experience will be a valuable addition to our team. We look forward to welcoming you aboard!</p>
 
                       <p>Sincerely,</p>
-                      <p><strong>[HR Name]</strong></p>
+                      <p><strong>${currentOffer.hrName || '[HR Name]'}</strong></p>
                       <p>Human Resources Department</p>
                       <p>Just Tap Loans</p>
                     </div>
@@ -319,7 +325,7 @@ function JobOffers() {
 
               <h4>Benefits:</h4>
               <ul>
-                ${currentOffer.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
+                <li>${currentOffer.benefits}</li>
               </ul>
 
               <h4>Terms & Conditions:</h4>
