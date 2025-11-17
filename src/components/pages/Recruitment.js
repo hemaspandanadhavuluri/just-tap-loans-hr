@@ -14,7 +14,7 @@ function Recruitment() {
   return (
     <div className="recruitment-page">
       {/* Navbar */}
-      <nav>
+      <nav class="recruitment-nav">
         <ul>
           <li>
             <NavLink to="/Recruitment" className={({ isActive }) => isActive ? "active" : ""} end>Recruitment Dashboard</NavLink>

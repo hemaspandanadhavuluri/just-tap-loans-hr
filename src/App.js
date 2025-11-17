@@ -10,6 +10,8 @@ import Attendance_Time_Tracking from './components/pages/Attendance_Time_Trackin
 import Leave_Holiday_Management from './components/pages/Leave_Holiday_Management';
 import Payroll_Benifits from './components/pages/Payroll_Benifits';
 import PublicJobListings from './components/pages/PublicJobListings';
+import OnboardingForm from './components/pages/OnboardingForm';
+import OnboardingEdit from './components/pages/OnboardingEdit';
 import { RecruitmentProvider } from './components/pages/RecruitmentContext';
 import { ActivityProvider } from './components/pages/ActivityContext';
 import Recruitment from './components/pages/Recruitment';
@@ -21,7 +23,7 @@ import EmployeeDashboard from './components/pages/EmployeeDashboard';
 
 function AppContent() {
     const location = useLocation();
-    const isPublicPage = location.pathname === '/careers' || location.pathname.startsWith('/employee');
+    const isPublicPage = location.pathname === '/careers' || location.pathname.startsWith('/employee') || location.pathname === '/onboarding-form' || location.pathname.startsWith('/onboarding/edit');
 
     return (
         <div className="App">
@@ -37,6 +39,8 @@ function AppContent() {
                         <Route path="/Payroll_Benifits" element={<Payroll_Benifits />} />
                         <Route path="/Recruitment/*" element={<Recruitment />} />
                         <Route path="/careers" element={<PublicJobListings />} />
+                        <Route path="/onboarding-form" element={<OnboardingForm />} />
+                        <Route path="/onboarding/edit/:id" element={<OnboardingEdit />} />
                         <Route path="/employee/login" element={<EmployeeLogin />} />
                         <Route path="/employee/dashboard/*" element={<EmployeeDashboard />} />
                         <Route path="/employee" element={<Navigate to="/employee/login" replace />} />
